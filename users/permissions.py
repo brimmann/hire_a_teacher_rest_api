@@ -6,6 +6,11 @@ from users.models import User
 
 class IsTeacher(permissions.BasePermission):
     def has_permission(self, request, view):
+        print(
+            request.user.is_authenticated
+            and request.user.id == request.data["user"]
+            and request.user.type == "teacher"
+        )
         return (
             request.user.is_authenticated
             and request.user.id == request.data["user"]

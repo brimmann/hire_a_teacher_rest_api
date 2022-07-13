@@ -14,14 +14,13 @@ class ResumeAssembler:
         self.user_id = user_id
 
     def fetch_intro(self):
-        user = User.objects.get(id=self.user_id)
         user_details = TeacherDetail.objects.get(user_id=self.user_id)
         resume = Resume.objects.get(user_id=self.user_id)
         self.intro = {
             "fullName": user_details.full_name,
             "headline": resume.heading,
             "phoneNumber": user_details.phone_number,
-            "emailAddress": user.email,
+            "emailAddress": resume.email,
             "address": resume.address,
             "brief": resume.intro,
         }
