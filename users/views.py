@@ -31,5 +31,14 @@ class OrgDetailView(generics.CreateAPIView):
     serializer_class = OrgDetailsSerializer
 
 
+@api_view()
+@authentication_classes([authentication.TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_org_details(request, format=None):
+    user_details = OrgDetail.objects.filter(user_id=request.user.id).values()[0]
+    print(user_details)
+    return Response(user_details)
+
+
 class CustomLoginView(LoginView):
     permission_classes = (TypeMatches,)

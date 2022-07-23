@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "users.apps.UsersConfig",
     "apis.apps.ApisConfig",
     "resume.apps.ResumeConfig",
+    "jobs.apps.JobsConfig",
 ]
 
 REST_FRAMEWORK = {
