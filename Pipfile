@@ -11,6 +11,7 @@ dj-rest-auth = "*"
 django-allauth = "*"
 django-cors-headers = "*"
 black = "*"
+nltk = "*"
 
 [dev-packages]
 

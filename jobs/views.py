@@ -4,13 +4,13 @@ from rest_framework.decorators import (
     authentication_classes,
     api_view,
 )
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from jobs.models import Job
 from jobs.permissions import IsOrg, IsOrgSelf
 from jobs.serializers import JobSerializer
-from jobs.jobs_query_handlers import get_non_awarded_jobs
+from jobs.jobs_query_handlers import get_non_awarded_jobs, get_relevant_jobs
 
 
 class CreateJobView(generics.CreateAPIView):
@@ -40,4 +40,12 @@ class DeleteJobView(generics.DestroyAPIView):
 @permission_classes([IsOrg])
 def get_jobs(request):
     res_data = get_non_awarded_jobs(request.user.id)
+    return Response(res_data)
+
+
+@api_view()
+@authentication_classes([authentication.TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_rel_jobs(request):
+    res_data = get_relevant_jobs(request.user.id)
     return Response(res_data)

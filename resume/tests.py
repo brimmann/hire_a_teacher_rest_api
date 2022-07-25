@@ -1,3 +1,4 @@
-from django.test import TestCase
+from search_map import SearchMapGen
 
-# Create your tests here.
+SearchMapGen.generate(2)
+

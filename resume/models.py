@@ -1,3 +1,4 @@
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
 from users.models import User
@@ -58,3 +59,9 @@ class Language(models.Model):
 
     def __str__(self):
         return self.resume.user.__str__() + "-lang"
+
+
+class RelSearchConfig(models.Model):
+    resume = models.ForeignKey(Resume, on_delete=models.CASCADE)
+    city = models.CharField(max_length=44, default="")
+    keywords = ArrayField(models.CharField(max_length=44))
