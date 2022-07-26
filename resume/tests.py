@@ -1,4 +1,3 @@
-from search_map import SearchMapGen
+from jobs.jobs_query_handlers import get_relevant_jobs
 
-SearchMapGen.generate(2)
-
+print(get_relevant_jobs(2))

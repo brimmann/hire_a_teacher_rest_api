@@ -104,7 +104,6 @@ class SearchMapGen(object):
             )
             record.save()
 
-
     @staticmethod
     def get_search_map(user_id):
         try:
