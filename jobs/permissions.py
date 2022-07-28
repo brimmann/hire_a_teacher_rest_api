@@ -9,6 +9,12 @@ class IsOrg(permissions.BasePermission):
         return user.is_authenticated and user.type == "org"
 
 
+class IsTeacher(permissions.BasePermission):
+    def has_permission(self, request, view):
+        user = request.user
+        return user.is_authenticated and user.type == "teacher"
+
+
 class IsOrgSelf(permissions.BasePermission):
     def has_permission(self, request, view):
         user = request.user
@@ -19,4 +25,3 @@ def is_compat(view, req_id):
     pk = view.kwargs["pk"]
     record = Job.objects.get(id=pk)
     return record.org_id == req_id
-

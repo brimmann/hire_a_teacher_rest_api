@@ -1,8 +1,6 @@
-from pprint import pprint
-
 from django.db.models import Q
 
-from jobs.models import Job
+from jobs.models import Job, Application
 from resume.search_map import SearchMapGen
 
 import nltk
@@ -32,7 +30,6 @@ def get_relevant_jobs(teacher_id):
         return {"relevant_jobs": {}}
     for matched_job in matched_jobs:
         temp.append(matched_job.values()[0])
-    print(temp)
 
     return {"relevant_jobs": temp}
 
@@ -50,14 +47,12 @@ def search_jobs(search_string):
 
     for matched_job in matched_jobs:
         temp.append(matched_job.values()[0])
-    print(temp)
 
     return {"matched_jobs": temp}
 
 
 def match_jobs(search_map):
     jobs_mini = list(Job.objects.values("id", "title", "description", "tags"))
-    print("to", search_map)
     match_job_ids = []
     matched_jobs = []
 
@@ -66,10 +61,16 @@ def match_jobs(search_map):
             if key != "id":
                 for keyword in search_map["keywords"]:
                     if keyword.casefold() in section.casefold():
-                        print("match this", keyword)
                         match_job_ids.append(job["id"])
 
     match_job_ids = list(set(match_job_ids))
+
+    applications = Application.objects.all()
+
+    for application in applications:
+        for match_job_id in match_job_ids:
+            if application.job_id == match_job_id:
+                match_job_ids.remove(match_job_id)
 
     if len(match_job_ids) < 1:
         return None
@@ -111,7 +112,6 @@ class SearchMapGenAdv:
         self.__raw_map = set(self.__raw_map)
         self.__raw_map = list(self.__raw_map)
         tagged_map = nltk.pos_tag(self.__raw_map)
-        print(tagged_map)
         cleaned_map = []
         for el in tagged_map:
             if (
@@ -124,8 +124,6 @@ class SearchMapGenAdv:
             ):
                 cleaned_map.append(el[0])
         self.__raw_map = cleaned_map
-
-        print(cleaned_map)
 
     def __separate_keywords_and_places(self):
         words = self.__raw_map

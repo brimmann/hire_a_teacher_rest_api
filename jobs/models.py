@@ -1,6 +1,6 @@
 from django.db import models
 
-from users.models import OrgDetail
+from users.models import OrgDetail, User
 
 
 class Job(models.Model):
@@ -18,3 +18,12 @@ class Job(models.Model):
 
     def __str__(self):
         return self.org.org_name.__str__() + " job"
+
+
+class Application(models.Model):
+    job = models.ForeignKey(Job, on_delete=models.CASCADE)
+    teacher = models.ForeignKey(User, on_delete=models.CASCADE)
+    date_applied = models.CharField(max_length=16, default="")
+
+    def __str__(self):
+        return self.teacher.email.__str__() + " application"

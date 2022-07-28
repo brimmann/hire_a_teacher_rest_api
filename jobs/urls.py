@@ -6,6 +6,7 @@ from jobs.views import (
     DeleteJobView,
     get_rel_jobs,
     get_search_job,
+    CreateApplicationView,
 )
 
 urlpatterns = [
@@ -15,4 +16,5 @@ urlpatterns = [
     path("delete/<int:pk>", DeleteJobView.as_view()),
     path("get_rel", get_rel_jobs),
     path("search", get_search_job),
+    path("apply", CreateApplicationView.as_view()),
 ]

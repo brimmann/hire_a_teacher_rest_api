@@ -9,12 +9,13 @@ from rest_framework.response import Response
 
 from jobs.models import Job
 from jobs.permissions import IsOrg, IsOrgSelf
-from jobs.serializers import JobSerializer
+from jobs.serializers import JobSerializer, ApplicationSerializer
 from jobs.jobs_query_handlers import (
     get_non_awarded_jobs,
     get_relevant_jobs,
     search_jobs,
 )
+from jobs.permissions import IsTeacher
 
 
 class CreateJobView(generics.CreateAPIView):
@@ -73,3 +74,21 @@ def get_search_job(request):
     res_data = {"matched_jobs": []}
 
     return Response(res_data)
+
+
+class CreateApplicationView(generics.CreateAPIView):
+    permission_classes = (IsTeacher,)
+    serializer_class = ApplicationSerializer
+
+    def finalize_response(self, request, response, *args, **kwargs):
+        super().finalize_response(request, response, *args, **kwargs)
+        if request.data:
+            if request.data["job"]:
+                self.__increase_apps(request.data["job"])
+
+        return response
+
+    @staticmethod
+    def __increase_apps(job_id):
+        job = Job.objects.get(id=job_id)
+        job.apps_no = job.apps_no + 1
