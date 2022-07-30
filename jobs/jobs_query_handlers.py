@@ -1,4 +1,7 @@
+from pprint import pprint
+
 from django.db.models import Q
+from django.forms import model_to_dict
 
 from jobs.models import Job, Application
 from resume.search_map import SearchMapGen
@@ -6,7 +9,6 @@ from resume.search_map import SearchMapGen
 import nltk
 import requests
 import json
-
 
 SEARCH_BASE_URL = "api.tomtom.com/search/2/search"
 API_KEY = "q1TIKeqJMLhzvbUmQTKP9g6t3Q2jTgzk"
@@ -24,7 +26,7 @@ def get_relevant_jobs(teacher_id):
     if search_map is None:
         return {"error": "Resume relevant search configuration is not found"}
 
-    matched_jobs = match_jobs(search_map)
+    matched_jobs = match_jobs(search_map, teacher_id)
     temp = []
     if matched_jobs is None:
         return {"relevant_jobs": {}}
@@ -34,13 +36,13 @@ def get_relevant_jobs(teacher_id):
     return {"relevant_jobs": temp}
 
 
-def search_jobs(search_string):
+def search_jobs(search_string, teacher_id):
     if len(search_string) < 1:
         return {"matched_jobs": []}
     SearchMapGenAdv.generate(search_string)
     search_map = SearchMapGenAdv.getMap()
 
-    matched_jobs = match_jobs(search_map)
+    matched_jobs = match_jobs(search_map, teacher_id)
     temp = []
     if matched_jobs is None:
         return {"matched_jobs": []}
@@ -51,7 +53,7 @@ def search_jobs(search_string):
     return {"matched_jobs": temp}
 
 
-def match_jobs(search_map):
+def match_jobs(search_map, teacher_id):
     jobs_mini = list(Job.objects.values("id", "title", "description", "tags"))
     match_job_ids = []
     matched_jobs = []
@@ -69,7 +71,10 @@ def match_jobs(search_map):
 
     for application in applications:
         for match_job_id in match_job_ids:
-            if application.job_id == match_job_id:
+            if (
+                application.job_id == match_job_id
+                and application.teacher_id == teacher_id
+            ):
                 match_job_ids.remove(match_job_id)
 
     if len(match_job_ids) < 1:
@@ -79,6 +84,24 @@ def match_jobs(search_map):
         matched_jobs.append(Job.objects.filter(id=job_id))
 
     return matched_jobs
+
+
+def get_applications_teacher(teacher_id):
+    applications = Application.objects.all()
+    result = []
+
+    for application in applications:
+        if application.teacher_id == teacher_id:
+            single_result = model_to_dict(application.job)
+            single_result["app_id"] = application.id
+            single_result["date_applied"] = application.date_applied
+            result.append(single_result)
+
+    print(result)
+    if len(result) < 1:
+        return {"applications": []}
+
+    return {"applications": result}
 
 
 class SearchMapGenAdv:
@@ -150,3 +173,42 @@ class SearchMapGenAdv:
         keywords = words
 
         self.__raw_map = {"places": places, "keywords": keywords}
+
+
+def get_org_apps(org_id):
+    applications = Application.objects.filter(job__org_id=org_id)
+    result = []
+
+    for application in applications:
+        unified_object = {
+            "job": model_to_dict(application.job),
+            "app": model_to_dict(application),
+        }
+        unified_object["app"][
+            "teacher_name"
+        ] = application.teacher.teacherdetail.full_name
+        result.append(unified_object)
+
+    if len(result) < 1:
+        return {"applications": []}
+
+    return {"applications": result}
+
+
+def get_org_apps_job_based(org_id, job_id):
+    applications = Application.objects.filter(job__org_id=org_id).filter(job_id=job_id)
+    result = {
+        'job': model_to_dict(Job.objects.get(id=job_id)),
+        'apps': []
+    }
+
+    for application in applications:
+        teacher_name = application.teacher.teacherdetail.full_name
+        app = model_to_dict(application)
+        app['teacher_name'] = teacher_name
+        result['apps'].append(app)
+
+    if len(result['apps']) < 1:
+        return {"applications": {}}
+
+    return result

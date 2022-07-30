@@ -36,6 +36,7 @@ class ResumeUpdate(generics.UpdateAPIView):
         super().finalize_response(request, response, *args, **kwargs)
         if response.status_code == 200:
             SearchMapGen.generate(request.user.id)
+            print("search-map called")
         return response
 
 
@@ -173,4 +174,17 @@ def get_resume(request):
         return Response(resume_assembler.resume_dict)
 
     raise NotFound
+
+
+@api_view()
+@authentication_classes([authentication.TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_resume_public(request):
+    resume_assembler = ResumeAssembler(request.query_params['id'])
+    if resume_assembler.is_resume_exist():
+        resume_assembler.build()
+        return Response(resume_assembler.resume_dict)
+
+    raise NotFound
+
 

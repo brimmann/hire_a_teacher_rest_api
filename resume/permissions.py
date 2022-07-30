@@ -23,6 +23,8 @@ class IsMyResumeUpdate(permissions.BasePermission):
         )
 
 
+
+
 class DeleteResume(permissions.BasePermission):
     def has_permission(self, request, view):
         return (

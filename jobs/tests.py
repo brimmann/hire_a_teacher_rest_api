@@ -1,5 +1,6 @@
-from jobs_query_handlers import search_jobs
+from jobs_query_handlers import get_org_apps_job_based
 
-data = search_jobs('Islamabad web teacher')
+get_org_apps_job_based(35, 30)
 
-print('data', data)
+
+

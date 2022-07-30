@@ -7,6 +7,8 @@ from jobs.views import (
     get_rel_jobs,
     get_search_job,
     CreateApplicationView,
+    get_applications,
+    DeleteApplicationView
 )
 
 urlpatterns = [
@@ -17,4 +19,6 @@ urlpatterns = [
     path("get_rel", get_rel_jobs),
     path("search", get_search_job),
     path("apply", CreateApplicationView.as_view()),
+    path("apps", get_applications),
+    path("apps_withdraw/<int:pk>", DeleteApplicationView.as_view())
 ]

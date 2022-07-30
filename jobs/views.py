@@ -7,13 +7,16 @@ from rest_framework.decorators import (
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from jobs.models import Job
-from jobs.permissions import IsOrg, IsOrgSelf
+from jobs.models import Job, Application
+from jobs.permissions import IsOrg, IsOrgSelf, AllowWithdraw
 from jobs.serializers import JobSerializer, ApplicationSerializer
 from jobs.jobs_query_handlers import (
     get_non_awarded_jobs,
     get_relevant_jobs,
     search_jobs,
+    get_applications_teacher,
+    get_org_apps,
+    get_org_apps_job_based
 )
 from jobs.permissions import IsTeacher
 
@@ -68,7 +71,7 @@ def get_search_job(request):
             search_string = search_string.lower()
             search_string = " ".join(search_string.split("+"))
             print("added", search_string)
-            res_data = search_jobs(search_string)
+            res_data = search_jobs(search_string, request.user.id)
             return Response(res_data)
 
     res_data = {"matched_jobs": []}
@@ -92,3 +95,40 @@ class CreateApplicationView(generics.CreateAPIView):
     def __increase_apps(job_id):
         job = Job.objects.get(id=job_id)
         job.apps_no = job.apps_no + 1
+        job.save()
+
+
+@api_view()
+@authentication_classes([authentication.TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_applications(request):
+    if request.user.type == "teacher":
+        res_data = get_applications_teacher(request.user.id)
+    else:
+        if bool(request.query_params):
+            res_data = get_org_apps_job_based(request.user.id, request.query_params['job_id'])
+        else:
+            res_data = get_org_apps(request.user.id)
+    return Response(res_data)
+
+
+class DeleteApplicationView(generics.DestroyAPIView):
+    permission_classes = (AllowWithdraw,)
+    serializer_class = ApplicationSerializer
+    queryset = Application.objects.all()
+    job = None
+
+    def initial(self, request, *args, **kwargs):
+        super().initial(request, *args, **kwargs)
+        self.job = Application.objects.get(id=self.kwargs["pk"]).job
+
+    def finalize_response(self, request, response, *args, **kwargs):
+        super().finalize_response(request, response, *args, **kwargs)
+        self.__decrease_apps(self.job)
+
+        return response
+
+    @staticmethod
+    def __decrease_apps(job):
+        job.apps_no = job.apps_no - 1
+        job.save()

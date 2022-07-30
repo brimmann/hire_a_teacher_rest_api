@@ -15,10 +15,12 @@ from resume.views import (
     LangView,
     LangUpdate,
     LangDelete,
+    get_resume_public,
 )
 
 urlpatterns = [
     path("", get_resume),
+    path("public", get_resume_public),
     path("create", ResumeView.as_view()),
     path("update/<int:pk>", ResumeUpdate.as_view()),
     path("create/exp", ExperienceView.as_view()),

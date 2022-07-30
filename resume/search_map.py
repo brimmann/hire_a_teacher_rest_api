@@ -34,7 +34,7 @@ class SearchMapGen(object):
         instance.__get_raw_data()
         instance.__structure_raw_data()
         instance.__pack_data()
-        instance.__storeMap()
+        instance.__store_map()
 
     def __get_raw_data(self):
         resume = Resume.objects.get(user_id=self.__user_id)
@@ -89,13 +89,9 @@ class SearchMapGen(object):
         final_data = {"keywords": list(cleaned_data), "city": raw_map["city"]}
         self.__ready_map = final_data
 
-    def __storeMap(self):
-        try:
-            record = RelSearchConfig.objects.filter(resume_id=self.__user_id)
-            record.update(
-                keywords=self.__ready_map["keywords"], city=self.__raw_map["city"]
-            )
-        except RelSearchConfig.DoesNotExist:
+    def __store_map(self):
+        record = RelSearchConfig.objects.filter(resume_id=self.__user_id)
+        if not record:
             resume = Resume.objects.get(user_id=self.__user_id)
             record = RelSearchConfig(
                 resume=resume,
@@ -103,6 +99,10 @@ class SearchMapGen(object):
                 city=self.__raw_map["city"],
             )
             record.save()
+            return
+        record.update(
+            keywords=self.__ready_map["keywords"], city=self.__raw_map["city"]
+        )
 
     @staticmethod
     def get_search_map(user_id):
