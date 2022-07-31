@@ -8,7 +8,8 @@ from jobs.views import (
     get_search_job,
     CreateApplicationView,
     get_applications,
-    DeleteApplicationView
+    DeleteApplicationView,
+    search_teacher_get,
 )
 
 urlpatterns = [
@@ -18,7 +19,8 @@ urlpatterns = [
     path("delete/<int:pk>", DeleteJobView.as_view()),
     path("get_rel", get_rel_jobs),
     path("search", get_search_job),
+    path("search/teachers", search_teacher_get),
     path("apply", CreateApplicationView.as_view()),
     path("apps", get_applications),
-    path("apps_withdraw/<int:pk>", DeleteApplicationView.as_view())
+    path("apps_withdraw/<int:pk>", DeleteApplicationView.as_view()),
 ]

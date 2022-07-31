@@ -91,6 +91,8 @@ class SearchMapGen(object):
 
     def __store_map(self):
         record = RelSearchConfig.objects.filter(resume_id=self.__user_id)
+        if "teacher".casefold() in self.__ready_map["keywords"]:
+            self.__ready_map["keywords"].remove("teacher".casefold())
         if not record:
             resume = Resume.objects.get(user_id=self.__user_id)
             record = RelSearchConfig(

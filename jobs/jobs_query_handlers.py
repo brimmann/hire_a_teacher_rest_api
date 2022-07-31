@@ -4,6 +4,7 @@ from django.db.models import Q
 from django.forms import model_to_dict
 
 from jobs.models import Job, Application
+from resume.models import RelSearchConfig, Resume
 from resume.search_map import SearchMapGen
 
 import nltk
@@ -51,6 +52,40 @@ def search_jobs(search_string, teacher_id):
         temp.append(matched_job.values()[0])
 
     return {"matched_jobs": temp}
+
+
+def search_teachers(search_string):
+    if len(search_string) < 1:
+        return {"matched_teachers": []}
+    SearchMapGenAdv.generate(search_string)
+    search_map = SearchMapGenAdv.getMap()
+    rel_search_configs = RelSearchConfig.objects.all()
+    result_ids = []
+    if "teacher".casefold() in search_map["keywords"]:
+        search_map["keywords"].remove("teacher".casefold())
+
+    for rel_search_config in rel_search_configs:
+        for keyword in rel_search_config.keywords:
+            for word in search_map["keywords"]:
+                if keyword.casefold() in word.casefold():
+                    result_ids.append(rel_search_config.resume_id)
+
+    if len(result_ids) < 1:
+        return {"matched_teachers": []}
+
+    result = []
+    for result_id in result_ids:
+        resume = Resume.objects.get(user_id=result_id)
+        result.append(
+            {
+                "teacher_id": resume.user_id,
+                "full_name": resume.user.teacherdetail.full_name,
+                "headline": resume.heading,
+                "brief": resume.intro
+            }
+        )
+
+    return {"matched_teachers": result}
 
 
 def match_jobs(search_map, teacher_id):

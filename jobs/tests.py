@@ -1,6 +1,8 @@
-from jobs_query_handlers import get_org_apps_job_based
+from jobs_query_handlers import search_teachers
 
-get_org_apps_job_based(35, 30)
+search_teachers("web teacher")
+
+
 
 
 

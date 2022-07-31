@@ -16,7 +16,8 @@ from jobs.jobs_query_handlers import (
     search_jobs,
     get_applications_teacher,
     get_org_apps,
-    get_org_apps_job_based
+    get_org_apps_job_based,
+search_teachers
 )
 from jobs.permissions import IsTeacher
 
@@ -109,6 +110,23 @@ def get_applications(request):
             res_data = get_org_apps_job_based(request.user.id, request.query_params['job_id'])
         else:
             res_data = get_org_apps(request.user.id)
+    return Response(res_data)
+
+
+@api_view()
+@authentication_classes([authentication.TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def search_teacher_get(request):
+    if bool(request.query_params):
+        if "search_string" in request.query_params:
+            search_string = request.query_params["search_string"]
+            search_string = search_string.lower()
+            search_string = " ".join(search_string.split("+"))
+            res_data = search_teachers(search_string)
+            return Response(res_data)
+
+    res_data = {"matched_teachers": []}
+
     return Response(res_data)
 
 
