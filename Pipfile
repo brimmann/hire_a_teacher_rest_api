@@ -13,6 +13,7 @@ django-cors-headers = "*"
 black = "*"
 nltk = "*"
 requests = "*"
+arrow = "*"
 
 [dev-packages]
 

@@ -1,9 +1,10 @@
 from pprint import pprint
 
+import arrow
 from django.db.models import Q
 from django.forms import model_to_dict
 
-from jobs.models import Job, Application
+from jobs.models import Job, Application, Interview
 from resume.models import RelSearchConfig, Resume
 from resume.search_map import SearchMapGen
 
@@ -81,7 +82,7 @@ def search_teachers(search_string):
                 "teacher_id": resume.user_id,
                 "full_name": resume.user.teacherdetail.full_name,
                 "headline": resume.heading,
-                "brief": resume.intro
+                "brief": resume.intro,
             }
         )
 
@@ -89,7 +90,8 @@ def search_teachers(search_string):
 
 
 def match_jobs(search_map, teacher_id):
-    jobs_mini = list(Job.objects.values("id", "title", "description", "tags"))
+    jobs = Job.objects.exclude(status="interviewing")
+    jobs_mini = list(jobs.values("id", "title", "description", "tags"))
     match_job_ids = []
     matched_jobs = []
 
@@ -232,18 +234,59 @@ def get_org_apps(org_id):
 
 def get_org_apps_job_based(org_id, job_id):
     applications = Application.objects.filter(job__org_id=org_id).filter(job_id=job_id)
-    result = {
-        'job': model_to_dict(Job.objects.get(id=job_id)),
-        'apps': []
-    }
+    result = {"job": model_to_dict(Job.objects.get(id=job_id)), "apps": []}
 
     for application in applications:
         teacher_name = application.teacher.teacherdetail.full_name
         app = model_to_dict(application)
-        app['teacher_name'] = teacher_name
-        result['apps'].append(app)
+        app["teacher_name"] = teacher_name
+        result["apps"].append(app)
 
-    if len(result['apps']) < 1:
+    if len(result["apps"]) < 1:
         return {"applications": {}}
 
     return result
+
+
+def get_interviews_teacher(teacher_id):
+    interviews = Interview.objects.filter(teacher_id=teacher_id)
+    result = []
+
+    for interview in interviews:
+        mod_interview = model_to_dict(interview)
+        mod_interview["time"] = arrow.get(
+            mod_interview["time"], "YYYY-MM-DD HH:mm A"
+        ).format("dddd, MMMM D, YYYY - hh:mm A")
+        temp = {
+            "interview": mod_interview,
+            "job": model_to_dict(interview.job),
+        }
+        result.append(temp)
+
+    if len(result) < 1:
+        return {"interviews": []}
+
+    return {"interviews": result}
+
+
+def get_interviews_org(org_id):
+    interviews = Interview.objects.filter(job__org_id=org_id)
+    result = []
+
+    for interview in interviews:
+        mod_interview = model_to_dict(interview)
+        mod_interview["time"] = arrow.get(
+            mod_interview["time"], "YYYY-MM-DD HH:mm A"
+        ).format("dddd, MMMM D, YYYY - hh:mm A")
+        temp = {
+            "interview": mod_interview,
+            "job": model_to_dict(interview.job),
+        }
+        result.append(temp)
+
+    if len(result) < 1:
+        return {"interviews": []}
+
+    print(result)
+
+    return {"interviews": result}

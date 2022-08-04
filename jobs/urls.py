@@ -10,6 +10,9 @@ from jobs.views import (
     get_applications,
     DeleteApplicationView,
     search_teacher_get,
+    CreateInterviewView,
+    get_interviews,
+    delete_interview_teacher
 )
 
 urlpatterns = [
@@ -23,4 +26,7 @@ urlpatterns = [
     path("apply", CreateApplicationView.as_view()),
     path("apps", get_applications),
     path("apps_withdraw/<int:pk>", DeleteApplicationView.as_view()),
+    path("accept", CreateInterviewView.as_view()),
+    path("interviews", get_interviews),
+    path("interviews_delete", delete_interview_teacher)
 ]
