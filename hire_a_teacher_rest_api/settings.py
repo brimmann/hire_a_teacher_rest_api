@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "apis.apps.ApisConfig",
     "resume.apps.ResumeConfig",
     "jobs.apps.JobsConfig",
+    "feedback.apps.FeedbackConfig"
 ]
 
 REST_FRAMEWORK = {

@@ -90,7 +90,8 @@ def search_teachers(search_string):
 
 
 def match_jobs(search_map, teacher_id):
-    jobs = Job.objects.exclude(status="interviewing")
+    jobs = Job.objects.exclude(Q(status__exact="interviewing") | Q(status__exact="awarded"))
+
     jobs_mini = list(jobs.values("id", "title", "description", "tags"))
     match_job_ids = []
     matched_jobs = []
