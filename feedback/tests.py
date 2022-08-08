@@ -1,3 +1,4 @@
-from operations import get_tokens
+from feedback.models import Token
+from operations import validate_token
 
-get_tokens(35)
+print(type(validate_token("283F-F5DD")) is Token)

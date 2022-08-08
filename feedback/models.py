@@ -10,3 +10,8 @@ class Token(models.Model):
     teacher = models.ForeignKey(User, on_delete=models.CASCADE)
     activation_date = models.CharField(max_length=18, default="")
     status = models.CharField(max_length=27, default="inactive")
+
+
+class Feedback(models.Model):
+    token = models.OneToOneField(Token, on_delete=models.CASCADE, primary_key=True)
+    rating = models.IntegerField(Token, default=1)

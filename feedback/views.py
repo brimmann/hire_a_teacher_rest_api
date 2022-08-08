@@ -7,7 +7,9 @@ from rest_framework.decorators import (
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
-from feedback.operations import generate_tokens, get_tokens
+from feedback.models import Token
+from feedback.operations import generate_tokens, get_tokens, validate_token, get_teacher_info, create_feedback, \
+    calculate_feedback
 from jobs.models import Interview
 
 
@@ -45,3 +47,33 @@ def get_tokens_endpoint(request):
         return Response(res_data)
 
     return Response({"message": "Not found"})
+
+
+@api_view(['POST'])
+@authentication_classes([authentication.TokenAuthentication])
+@permission_classes([AllowAny])
+def get_info_endpoint(request):
+    token = request.data["token"]
+    check = validate_token(token)
+    print("Check:", check)
+
+    if type(check) is Token:
+        return Response(get_teacher_info(check.teacher_id, check.job_id))
+    else:
+        return Response(check)
+
+
+@api_view(['POST'])
+@authentication_classes([authentication.TokenAuthentication])
+@permission_classes([AllowAny])
+def submit_feedback_endpoint(request):
+    token = request.data["token"]
+    rating = request.data["rating"]
+    check = validate_token(token)
+
+    if type(check) is Token:
+        create_feedback(check, rating)
+        calculate_feedback(check.teacher_id)
+        return Response("success")
+    else:
+        return Response("my_bad_request")

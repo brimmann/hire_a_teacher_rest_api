@@ -23,6 +23,8 @@ class ResumeAssembler:
             "emailAddress": resume.email,
             "address": resume.address,
             "brief": resume.intro,
+            "ranking": resume.ranking,
+            "students": resume.students
         }
 
     def fetch_exp(self):

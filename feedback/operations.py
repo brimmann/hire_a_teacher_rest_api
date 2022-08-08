@@ -4,8 +4,10 @@ from pprint import pprint
 
 import arrow
 
-from feedback.models import Token
-from jobs.models import Interview
+from feedback.models import Token, Feedback
+from jobs.models import Interview, Job
+from resume.models import Resume
+from users.models import TeacherDetail
 
 
 def generate_tokens(interview_id, days, numbers):
@@ -49,4 +51,44 @@ def get_tokens(org_id):
     return {"tokens": result}
 
     pprint(result)
+
+
+def validate_token(token):
+    token = Token.objects.filter(token=token)
+    if not token.exists():
+        return "token_not_found"
+    elif token[0].status == "used":
+        return "token_used"
+    elif token[0].status == 'inactive':
+        return "token_inactive"
+    else:
+        return token[0]
+
+
+def get_teacher_info(teacher_id, job_id):
+    teacher = TeacherDetail.objects.get(user_id=teacher_id)
+    job = Job.objects.get(id=job_id)
+
+    return {
+        "teacher_name": teacher.full_name,
+        "teacher_heading": teacher.user.resume.heading,
+        "org": job.org.org_name
+    }
+
+
+def create_feedback(token, rating):
+    token.status = "used"
+    token.save()
+    feedback = Feedback(token=token, rating=rating)
+    feedback.save()
+
+
+def calculate_feedback(teacher_id):
+    feedbacks = Feedback.objects.filter(token__teacher_id=teacher_id)
+    feedbacks_list = list(feedbacks.values_list("rating", flat=True))
+    avg_feedback = sum(feedbacks_list) / len(feedbacks_list)
+    resume = Resume.objects.get(user_id=teacher_id)
+    resume.ranking = avg_feedback
+    resume.students = len(feedbacks_list)
+    resume.save()
 

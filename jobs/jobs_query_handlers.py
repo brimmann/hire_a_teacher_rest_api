@@ -239,8 +239,10 @@ def get_org_apps_job_based(org_id, job_id):
 
     for application in applications:
         teacher_name = application.teacher.teacherdetail.full_name
+        ranking= application.teacher.resume.ranking
         app = model_to_dict(application)
         app["teacher_name"] = teacher_name
+        app["ranking"] = ranking
         result["apps"].append(app)
 
     if len(result["apps"]) < 1:
