@@ -28,10 +28,10 @@ class CreateJobView(generics.CreateAPIView):
     permission_classes = (IsOrg,)
     serializer_class = JobSerializer
 
-    # def initial(self, request, *args, **kwargs):
-    #     super().initial(request, *args, **kwargs)
-    #     request.data["org"] = request.user.id
-    #     print(request.data)
+    def initial(self, request, *args, **kwargs):
+        super().initial(request, *args, **kwargs)
+        request.data["org"] = request.user.id
+        print(request.data)
 
 
 class UpdateJobView(generics.UpdateAPIView):
