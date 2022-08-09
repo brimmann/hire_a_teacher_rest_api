@@ -24,7 +24,7 @@ SECRET_KEY = "django-insecure-nb+m!x0ll0t&=r9bo0x!%b&((z6ib8i$803li%xwi5%)@urhit
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -72,6 +72,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "users.test_middleware.simple"
 ]
 
 ROOT_URLCONF = "hire_a_teacher_rest_api.urls"
@@ -181,4 +182,5 @@ CORS_ORIGIN_WHITELIST = (
     "http://localhost:8080",
     "http://127.0.0.1:8080",
     "http://localhost:63343",
+    "http://10.140.105.123:8080"
 )

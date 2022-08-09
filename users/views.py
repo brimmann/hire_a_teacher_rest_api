@@ -1,7 +1,13 @@
+from pprint import pprint
+
 import requests
 from dj_rest_auth.views import LoginView
 from rest_framework import generics, authentication
-from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.decorators import (
+    api_view,
+    permission_classes,
+    authentication_classes,
+)
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
@@ -42,3 +48,7 @@ def get_org_details(request, format=None):
 
 class CustomLoginView(LoginView):
     permission_classes = (TypeMatches,)
+
+    def initial(self, request, *args, **kwargs):
+        super().initial(request, *args, **kwargs)
+        pprint(request.META["HTTP_ORIGIN"])
