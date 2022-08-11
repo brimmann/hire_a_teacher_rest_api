@@ -26,11 +26,18 @@ class IsOrgSelf(permissions.BasePermission):
 class AllowWithdraw(permissions.BasePermission):
     def has_permission(self, request, view):
         user = request.user
-        app_exist = (
-            Application.objects.filter(id=view.kwargs["pk"])
-            .filter(teacher_id=user.id)
-            .exists()
-        )
+        if user.type == "teacher":
+            app_exist = (
+                Application.objects.filter(id=view.kwargs["pk"])
+                .filter(teacher_id=user.id)
+                .exists()
+            )
+        else:
+            app_exist = (
+                Application.objects.filter(id=view.kwargs["pk"])
+                .filter(job__org_id=user.id)
+                .exists()
+            )
         return user.is_authenticated and app_exist
 
 

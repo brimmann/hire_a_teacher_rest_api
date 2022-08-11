@@ -72,7 +72,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "users.test_middleware.simple"
+    # "users.test_middleware.simple"
 ]
 
 ROOT_URLCONF = "hire_a_teacher_rest_api.urls"

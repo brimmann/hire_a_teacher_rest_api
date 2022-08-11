@@ -47,7 +47,7 @@ class ExperienceView(generics.CreateAPIView):
 
     def finalize_response(self, request, response, *args, **kwargs):
         super().finalize_response(request, response, *args, **kwargs)
-        if response.status_code == 200:
+        if response.status_code == 201:
             SearchMapGen.generate(request.user.id)
         return response
 

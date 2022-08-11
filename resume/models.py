@@ -9,9 +9,9 @@ class Resume(models.Model):
     intro = models.TextField(default="")
     ranking = models.DecimalField(max_digits=2, decimal_places=1, default=0.0)
     students = models.IntegerField(default=0)
-    heading = models.CharField(max_length=44, default="")
-    address = models.CharField(max_length=88, default="")
-    email = models.CharField(max_length=32, default="")
+    heading = models.CharField(max_length=80, default="")
+    address = models.CharField(max_length=150, default="")
+    email = models.CharField(max_length=50, default="")
 
     def __str__(self):
         return self.user.email + "- resume"

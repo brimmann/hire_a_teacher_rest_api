@@ -32,8 +32,15 @@ def get_relevant_jobs(teacher_id):
     temp = []
     if matched_jobs is None:
         return {"relevant_jobs": {}}
+
     for matched_job in matched_jobs:
-        temp.append(matched_job.values()[0])
+        job = matched_job.values()[0]
+        job['org_name'] = matched_job.values("org__org_name")[0]['org__org_name']
+        print(job)
+        temp.append(job)
+
+    # for matched_job in matched_jobs:
+    #     temp.append(matched_job.values()[0])
 
     return {"relevant_jobs": temp}
 
@@ -50,7 +57,10 @@ def search_jobs(search_string, teacher_id):
         return {"matched_jobs": []}
 
     for matched_job in matched_jobs:
-        temp.append(matched_job.values()[0])
+        job = matched_job.values()[0]
+        job['org_name'] = matched_job.values("org__org_name")[0]['org__org_name']
+        print(job)
+        temp.append(job)
 
     return {"matched_jobs": temp}
 
@@ -133,6 +143,7 @@ def get_applications_teacher(teacher_id):
             single_result = model_to_dict(application.job)
             single_result["app_id"] = application.id
             single_result["date_applied"] = application.date_applied
+            single_result["org_name"] = application.job.org.org_name
             result.append(single_result)
 
     print(result)
@@ -257,6 +268,8 @@ def get_interviews_teacher(teacher_id):
 
     for interview in interviews:
         mod_interview = model_to_dict(interview)
+        mod_interview['org_name'] = interview.job.org.org_name
+        print(mod_interview["time"])
         mod_interview["time"] = arrow.get(
             mod_interview["time"], "YYYY-MM-DD HH:mm A"
         ).format("dddd, MMMM D, YYYY - hh:mm A")
