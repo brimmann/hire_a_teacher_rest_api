@@ -13,7 +13,7 @@ class Job(models.Model):
     date_posted = models.CharField(max_length=16, default="")
     expire_date = models.CharField(max_length=12, default="")
     description = models.TextField(default="")
-    tags = models.CharField(max_length=128, default="")
+    tags = models.CharField(max_length=128, blank=True)
     apps_no = models.IntegerField(default=0)
 
     def __str__(self):
