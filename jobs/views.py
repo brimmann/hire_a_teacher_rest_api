@@ -197,7 +197,10 @@ def delete_interview_teacher(request):
     if bool(request.query_params["id"]):
         interview_id = request.query_params["id"]
         user_id = request.user.id
-        interview = Interview.objects.filter(id=interview_id).filter(teacher_id=user_id)
+        if request.user.type == "teacher":
+            interview = Interview.objects.filter(id=interview_id).filter(teacher_id=user_id)
+        else:
+            interview = Interview.objects.filter(id=interview_id).filter(job__org_id=user_id)
         if interview.exists():
             print("delete this", interview_id, user_id)
             deleting_interview = Interview.objects.get(id=interview_id)
