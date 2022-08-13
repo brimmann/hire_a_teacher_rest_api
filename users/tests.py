@@ -1,3 +1,3 @@
-from django.test import TestCase
+from django_rest_passwordreset.models import ResetPasswordToken
 
-# Create your tests here.
+ResetPasswordToken.objects.create(user_id=2, user_agent="user-agent", ip_address="100.100.100.100")

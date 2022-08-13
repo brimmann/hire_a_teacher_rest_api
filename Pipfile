@@ -14,6 +14,7 @@ black = "*"
 nltk = "*"
 requests = "*"
 arrow = "*"
+django-rest-passwordreset = "*"
 
 [dev-packages]
 

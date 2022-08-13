@@ -24,7 +24,7 @@ SECRET_KEY = "django-insecure-nb+m!x0ll0t&=r9bo0x!%b&((z6ib8i$803li%xwi5%)@urhit
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
@@ -44,12 +44,13 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "dj_rest_auth.registration",
     "corsheaders",
+    "django_rest_passwordreset",
     # Local
     "users.apps.UsersConfig",
     "apis.apps.ApisConfig",
     "resume.apps.ResumeConfig",
     "jobs.apps.JobsConfig",
-    "feedback.apps.FeedbackConfig"
+    "feedback.apps.FeedbackConfig",
 ]
 
 REST_FRAMEWORK = {
@@ -173,7 +174,20 @@ AUTHENTICATION_BACKENDS = (
     "allauth.account.auth_backends.AuthenticationBackend",
 )
 
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+DEFAULT_FROM_EMAIL = "rashiddives@zohomail.com"
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_USE_TLS = True
+# EMAIL_USE_SSL = True
+EMAIL_HOST = "smtp.zoho.com"
+EMAIL_HOST_USER = "rashiddives@zohomail.com"
+EMAIL_HOST_PASSWORD = "Book_book23"
+EMAIL_PORT = 587
+
+ACCOUNT_FORMS = {
+    "reset_password_from_key": "allauth.account.forms.ResetPasswordKeyForm"
+}
+
 
 CORS_ORIGIN_WHITELIST = (
     "http://localhost:3000",
@@ -183,5 +197,13 @@ CORS_ORIGIN_WHITELIST = (
     "http://127.0.0.1:8080",
     "http://localhost:63343",
     "http://10.140.105.123:8080",
-    "http://10.140.104.11:8080"
+    "http://10.140.104.11:8080",
 )
+
+DJANGO_REST_PASSWORDRESET_TOKEN_CONFIG = {
+    "CLASS": "django_rest_passwordreset.tokens.RandomNumberTokenGenerator",
+    "OPTIONS": {
+        "min_number": 1500,
+        "max_number": 9999
+    }
+}
