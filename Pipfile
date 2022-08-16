@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 django = "*"
-psycopg2 = "*"
+#psycopg2 = "*"
 djangorestframework = "*"
 dj-rest-auth = "*"
 django-allauth = "*"
@@ -19,4 +19,4 @@ django-rest-passwordreset = "*"
 [dev-packages]
 
 [requires]
-python_version = "3.10"
+python_version = "3.8"
