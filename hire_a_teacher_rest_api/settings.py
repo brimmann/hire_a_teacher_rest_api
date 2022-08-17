@@ -122,16 +122,16 @@ WSGI_APPLICATION = "hire_a_teacher_rest_api.wsgi.application"
 #         }
 #     }
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": "hireATeacher",
-#         "USER": "postgres",
-#         "PASSWORD": "bookbook",
-#         "HOST": "localhost",
-#         "PORT": "5432",
-#     }
-# }
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "hireATeacher",
+        "USER": "postgres",
+        "PASSWORD": "bookbook",
+        "HOST": "localhost",
+        "PORT": "5432",
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
