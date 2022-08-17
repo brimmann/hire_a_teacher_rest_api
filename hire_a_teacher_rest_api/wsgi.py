@@ -14,3 +14,5 @@ from django.core.wsgi import get_wsgi_application
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'hire_a_teacher_rest_api.settings')
 
 application = get_wsgi_application()
+
+print("somethign is happnening")
